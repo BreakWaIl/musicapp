@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Hello APP</title>
+    <link rel="stylesheet" type="text/css" href="./css/api.css" />
+    <link rel="stylesheet" type="text/css" href="./css/aui.css" />
+    <style type="text/css">
+        .aui-bar-nav { background: #FD4E56; }
+    </style>
+    <style type="text/css">
+        #demo {
+            width: 4rem;
+            height: 4rem;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-left: -2rem;
+            margin-top: -2rem;
+            background-color: #e0e0e0;
+            border-radius: 50%;
+            line-height: 4rem;
+            text-align: center;
+            color: #212121;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="wrap">
+        <div id="header">
+            <header class="aui-bar aui-bar-nav" id="title">热门</header>
+        </div>
+        <div id="main">
+        </div>
+        <footer class="aui-bar aui-bar-tab"  id="footer">
+            <div class="aui-bar-tab-item aui-active" tapmode>
+                <i class="aui-iconfont aui-icon-home"></i>
+                <div class="aui-bar-tab-label">热门</div>
+            </div>
+            <div class="aui-bar-tab-item" tapmode>
+                <i class="aui-iconfont aui-icon-star"></i>
+                <div class="aui-bar-tab-label">广场</div>
+            </div>
+            <div class="aui-bar-tab-item" tapmode>
+            <i class="aui-iconfont aui-icon-wechat-circle"></i>
+                <div class="aui-bar-tab-label">动态</div>
+            </div>
+            <div class="aui-bar-tab-item" tapmode>
+                <div class="aui-dot"></div>
+                <i class="aui-iconfont aui-icon-my"></i>
+                <div class="aui-bar-tab-label">关于</div>
+            </div>
+        </footer>
+    </div>
+</body>
+<script type="text/javascript" src="./script/api.js"></script>
+<script type="text/javascript" src="./script/aui-tab.js" ></script>
+<script type="text/javascript">
+    apiready = function(){
+        api.parseTapmode();
+
+        //默认打开热门页面
+        openPage('hot', '热门');
+    }
+    var tab = new auiTab({
+        element:document.getElementById("footer")
+    },function(ret){
+        console.log(ret);
+        if(ret){
+            //document.getElementById("demo").textContent = ret.index;
+            switch (ret.index) {
+                case 1:
+                    openPage('hot', '热门');
+                    break;
+                case 2:
+                    openPage('guangchang', '广场');
+                    break;
+                case 3:
+                    openPage('action', '动态');
+                    break;
+                case 4:
+                    openPage('about', '关于我们');
+                    break;
+                default:
+                    openPage('hot', '热门');
+                    break;
+            }
+        }
+    }); 
+
+
+    //打开页面方法
+    function openPage(pageName, title) {
+        var header = $api.byId('header');
+        //适配iOS7+，Android4.4+状态栏沉浸式效果，详见config文档statusBarAppearance字段
+        $api.fixStatusBar(header);
+        //动态计算header的高度，因iOS7+和Android4.4+上支持沉浸式效果，
+        //因此header的实际高度可能为css样式中声明的44px加上设备状态栏高度
+        //其中，IOS状态栏高度为20px，Android为25px
+        var headerH = $api.offset(header).h;
+        //footer高度为css样式中声明的30px
+        var footerH = 60;
+        //frame的高度为当前window高度减去header和footer的高度
+        var frameH = api.winHeight - headerH - footerH;
+        api.openFrame({
+            name: 'main',
+            url: 'html/'+pageName+'.html',
+            bounces: true,
+            rect: {
+                x: 0,
+                y: headerH,
+                w: 'auto',
+                h: frameH
+            }
+        });
+
+        //切换头部标题
+        $api.byId('title').innerHTML = title;
+    }
+</script>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>AUI快速完成布局</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+</head>
+<body> 
+    <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-media-list" id="musicList">
+
+          <li v-for="music in musicList" class="aui-list-item aui-list-item-middle" onclick="openMusic('{{ music.url }}')">
+                <div class="aui-media-list-item-inner">
+                    <div class="aui-list-item-media wechat-avatar">
+                        <img v-bind:src="music.logo"/>
+                    </div>
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title">{{ music.title }}</div>
+                            <div class="aui-list-item-right">》》</div>
+                        </div>
+                        <div class="aui-list-item-text aui-font-size-12">
+                            {{ music.author }}
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</body>
+<script src="https://cdn.bootcss.com/jquery/1.8.3/jquery.js"></script>
+<script type="text/javascript" src="../script/api.js" ></script>
+<script type="text/javascript" src="../script/vue.js" ></script>
+<script type="text/javascript">
+apiready = function(){
+
+    //默认点击动态，发送请求，显示第一页数据
+    getData(0);
+
+
+    api.setRefreshHeaderInfo({
+        loadingImg: 'widget://image/refresh.png',
+        bgColor: '#ccc',
+        textColor: '#fff',
+        textDown: '下拉刷新...',
+        textUp: '松开刷新...'
+    }, function(ret, err) {
+        //在这里从服务器加载数据，加载完成后调用api.refreshHeaderLoadDone()方法恢复组件到默认状态
+        getData(1);
+        api.refreshHeaderLoadDone();
+    });
+}
+
+function openMusic (musicUrl) {
+    api.openFrame({
+        name: 'frame_music',
+        url: './music.html',
+        bounces: true,
+        rect: {
+            x: 0,
+            y: 0,
+            w: 'auto',
+            h: 'auto'
+        },
+        pageParam: {
+            musicUrl: musicUrl
+        }
+    });
+}
+
+
+//全局变量起始位置
+var offset = 0;
+
+function getData(isAdd) {
+    if (isAdd) offset+=2;
+    //脚下留心：必须写本机的ip  因为模拟器也是一个单独的操作系统
+    api.ajax({
+        url: 'http://192.168.72.36/tp32_app_guangchangwu/index.php/api/music/index',
+        method: 'post',
+        data: {
+            values: {
+                offset: offset,
+                limit: 2,
+            }
+        }
+    }, function(ret, err) {
+       
+        //将json对象数据转化为字符串
+        if (ret && JSON.stringify(ret) !== '[]') {
+            //api.alert({ msg: JSON.stringify(ret) });
+            //alert(1);
+            //vue
+
+
+            //判断是否为下拉刷新
+            if(isAdd) {
+                //追加数据
+                for(var i=0;i<ret.length;i++) {
+                    vueData.unshift(ret[i]);
+                }
+                return;
+            }else{
+                vueData = ret;
+            }
+
+            new Vue({
+                el: '#musicList',
+                data: {
+                    musicList: ret
+                }
+            });
+
+            // var html = '';
+            // $.each(ret, function(i, itemObj) {
+            //     html += '<li class="aui-list-item aui-list-item-middle" onclick="openMusic(\''+itemObj.url+'\')">' + 
+            //         '<div class="aui-media-list-item-inner">' + 
+            //             '<div class="aui-list-item-media wechat-avatar">' + 
+            //                 '<img src="'+itemObj.logo+'" />' + 
+            //             '</div>' + 
+            //             '<div class="aui-list-item-inner">' + 
+            //                 '<div class="aui-list-item-text">' + 
+            //                     '<div class="aui-list-item-title">'+itemObj.title+'</div>' + 
+            //                     '<div class="aui-list-item-right">》》</div>' + 
+            //                 '</div>' + 
+            //                 '<div class="aui-list-item-text aui-font-size-12">' + 
+            //                    itemObj.author + '</div>' + 
+            //             '</div>' + 
+            //         '</div>' + 
+            //     '</li>';
+            // });
+
+            //拼接最终在页面显示
+            //$("ul").html(html);
+            //append();   后面追加
+            //prepend()   前面追加
+
+            // $('ul').prepend(html);
+        } else {
+            alert('没有更多数据');
+            // api.alert({ msg: JSON.stringify(err) });
+        }
+    });
+}
+</script>
+</html>

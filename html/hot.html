@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,aItemress=no">
+    <title>热门</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <style type="text/css">
+        .aui-content { padding: 0 8px; } 
+        .aui-content .aui-card-list { padding: 0px 6px; }
+        .aui-content .aui-card-list-footer { padding: 0px; }
+    </style>
+</head>
+<body>
+    <section class="aui-content">
+        <div class="aui-card-list" onclick="openVideo()">
+            <div class="aui-card-list-content">
+                <img src="../image/demo.png" />
+            </div>
+            <div class="aui-card-list-footer">
+                占位
+            </div>
+        </div>
+
+        <div class="aui-card-list">
+            <div class="aui-card-list-content">
+                <img src="../image/demo.png" />
+            </div>
+            <div class="aui-card-list-footer">
+                占位
+            </div>
+        </div>
+
+        <div class="aui-card-list">
+            <div class="aui-card-list-content">
+                <img src="../image/demo.png" />
+            </div>
+            <div class="aui-card-list-footer">
+                占位
+            </div>
+        </div>
+    </section>
+</body>
+<script type="text/javascript" src="../script/api.js" ></script>
+<script type="text/javascript">
+    apiready = function(){
+        api.parseTapmode();
+    }
+
+    function openVideo() {
+        api.openWin({
+            name: 'video',
+            url: './video.html',
+            pageParam: {
+                name: 'test'
+            }
+        });
+    }
+</script>
+</html>
